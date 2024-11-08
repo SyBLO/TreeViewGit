@@ -1,0 +1,65 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\obj\\Debug\\net8.0-ios\\iossimulator-x64\\scopedcss\\bundle\\MauiAppDT.styles.css",
+      "PackagePath": "staticwebassets\\MauiAppDT.styles.css"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\images\\gui_high_priority_icon_157129.png",
+      "PackagePath": "staticwebassets\\images\\gui_high_priority_icon_157129.png"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\images\\gui_low_priority_icon_157102.png",
+      "PackagePath": "staticwebassets\\images\\gui_low_priority_icon_157102.png"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\images\\gui_medium_priority_icon_157101.png",
+      "PackagePath": "staticwebassets\\images\\gui_medium_priority_icon_157101.png"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\images\\logo2.png",
+      "PackagePath": "staticwebassets\\images\\logo2.png"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\images\\logo3.svg",
+      "PackagePath": "staticwebassets\\images\\logo3.svg"
+    },
+    {
+      "Id": "C:\\App\\maui\\MauiAppDT\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0-ios\\iossimulator-x64\\staticwebassets\\msbuild.MauiAppDT.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0-ios\\iossimulator-x64\\staticwebassets\\msbuild.build.MauiAppDT.props",
+      "PackagePath": "build\\MauiAppDT.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0-ios\\iossimulator-x64\\staticwebassets\\msbuild.buildMultiTargeting.MauiAppDT.props",
+      "PackagePath": "buildMultiTargeting\\MauiAppDT.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0-ios\\iossimulator-x64\\staticwebassets\\msbuild.buildTransitive.MauiAppDT.props",
+      "PackagePath": "buildTransitive\\MauiAppDT.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

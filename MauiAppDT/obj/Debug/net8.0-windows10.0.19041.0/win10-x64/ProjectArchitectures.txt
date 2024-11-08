@@ -1,0 +1,1 @@
+C:\App\maui\AppDeskTopDT\MauiAppDT\MauiAppDT.csproj;x64

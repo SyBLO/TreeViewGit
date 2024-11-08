@@ -1,0 +1,429 @@
+﻿@page "/filemanager"
+
+@inject FileManagerService FileService
+@using MauiAppDTClassLibrary.ServicesApi.ArchivageService
+@using MauiAppDTClassLibrary.ServicesApi.FileService
+@using Radzen
+@using Blazorise
+@using Blazorise.Icons.FontAwesome
+@using Blazorise.TreeView
+@using System.Collections.ObjectModel
+
+<style>
+    /* Limite la hauteur de l'arborescence et active le défilement */
+    .tree-container {
+        height: 400px;
+        overflow-y: auto;
+        overflow-x: auto;
+        padding-right: 5px;
+    }
+
+    /* Masquer la barre de connexion bleue dans le TreeView */
+    .rz-treeview-node-connector {
+        display: none;
+    }
+
+    /* Conteneur de contenu pour la flèche, l'icône et le texte */
+    .tree-node-content {
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+        font-size: 0.85rem;
+    }
+    /* Style de survol pour interactivité */
+    .tree-node-container:hover {
+        background-color: #f0f0f0;
+        cursor: pointer;
+    }
+</style>
+
+<h3 class="text-center mb-4">Gestionnaire de Fichiers avec Blazorise TreeView</h3>
+
+<div class="d-flex justify-content-between">
+    <!-- Répertoire 1 -->
+    <Card Style="width: 40%;">
+        <CardHeader>
+            <h4>Répertoire 1</h4>
+        </CardHeader>
+        <CardBody>
+            <TextEdit @bind-Text="searchTerm1" Placeholder="Rechercher..." Style="width: 100%; margin-bottom: 10px;" />
+            <Button Size="Size.Small" Color="Color.Primary" IconName="fas fa-search" Clicked="@(() => SearchInTree(1))" Style="margin-bottom: 10px;">Chercher</Button>
+            <Button Size="Size.Small" Color="Color.Primary" IconName="fas fa-sync" Clicked="@(() => ReloadTree(1))" Style="margin-bottom: 10px;">Rafraîchir</Button>
+             
+            <div class="tree-container">
+                <TreeView TNode="FileNode" Nodes="@filteredTree1"
+                          HasChildNodes="@(node => node.IsDirectory)"
+                          GetChildNodes="@(node => LoadSubnodesSync(node.Path))"
+                          SelectedNodeChanged="OnSelectedNodeChanged1"
+                          SelectionMode="TreeViewSelectionMode.Single">
+                    <NodeContent> 
+                        @if (context.IsDirectory)
+                        {
+                          <i class="fas fa-folder" style="color: #FFD700; margin-right: 5px;"></i>
+                        }
+                        else
+                        {
+                            <input type="checkbox" @onchange="(e => OnNodeCheckedChanged(context, e))" style="margin-right: 5px;" />
+                           <i class="fas fa-file" style="color: gray; margin-right: 5px;"></i>
+                        }
+                        <span>@context.Name</span>                    
+                    </NodeContent>
+                </TreeView>
+            </div>
+        </CardBody>
+
+        <CardFooter>
+            <div class="d-flex justify-content-between">
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => ChangePage(1, -1))" Disabled="@(_page1 == 1)">Précédent</Button>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => ChangePage(1, 1))">Suivant</Button>
+            </div>
+        </CardFooter>
+    </Card>
+
+    <div class="d-flex flex-column justify-content-center gap-2">
+        <Button Color="Color.Primary" Size="Size.Small" IconName="fas fa-arrow-right" Clicked="MoveToDirectory2"><i class="fas fa-arrow-right"></i></Button>
+        <Button Color="Color.Primary" Size="Size.Small" IconName="fas fa-arrow-left" Clicked="MoveFromDirectory2"><i class="fas fa-arrow-left"></i></Button>
+    </div>
+
+    <!-- Répertoire 2 -->
+    <Card Style="width: 40%;">
+        <CardHeader>
+            <h4>Répertoire 2</h4>
+        </CardHeader>
+        <CardBody>
+            <TextEdit @bind-Text="searchTerm2" Placeholder="Rechercher..." Style="width: 100%; margin-bottom: 10px;" />
+            <Button Size="Size.Small" Color="Color.Primary" IconName="fas fa-sync" Clicked="@(() => ReloadTree(2))" Style="margin-bottom: 10px;">Rafraîchir</Button>
+
+            <div class="tree-container">
+                <TreeView TNode="FileNode" Nodes="@filteredTree2"
+                          HasChildNodes="@(node => node.IsDirectory)"
+                          GetChildNodes="@(node => LoadSubnodesSync(node.Path))"
+                          SelectedNodeChanged="OnSelectedNodeChanged2"
+                          SelectionMode="TreeViewSelectionMode.Single">
+                    <NodeContent>                       
+                                @if (context.IsDirectory)
+
+                                {
+                                    <i class="fas fa-folder" style="color: #FFD700; margin-right: 5px;"></i>
+                                }
+
+                                else
+
+                                {
+                                    <i class="fas fa-file" style="color: gray; margin-right: 5px;"></i>
+                                }
+                                <span>@context.Name</span>                          
+                    </NodeContent>
+                </TreeView>
+            </div>
+        </CardBody>
+        <CardFooter>
+            <div class="d-flex justify-content-between">
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => ChangePage(2, -1))" Disabled="@(_page2 == 1)">Précédent</Button>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => ChangePage(2, 1))">Suivant</Button>
+            </div>
+        </CardFooter>
+    </Card>
+
+    <div class="d-flex flex-column justify-content-center gap-2">
+        <Button Color="Color.Primary" Size="Size.Small" IconName="fas fa-arrow-right" Clicked="MoveToDirectory3"><i class="fas fa-arrow-right"></i></Button>
+        <Button Color="Color.Primary" Size="Size.Small" IconName="fas fa-arrow-left" Clicked="MoveFromDirectory3"><i class="fas fa-arrow-left"></i></Button>
+    </div>
+
+    <!-- Répertoire 3 -->
+    <Card Style="width: 40%;">
+        <CardHeader>
+            <h4>Répertoire 3</h4>
+        </CardHeader>
+        <CardBody>
+            <TextEdit @bind-Text="searchTerm3" Placeholder="Rechercher..." Style="width: 100%; margin-bottom: 10px;" />
+            <Button Size="Size.Small" Color="Color.Primary" IconName="fas fa-sync" Clicked="@(() => ReloadTree(3))" Style="margin-bottom: 10px;">Rafraîchir</Button>
+            <div class="tree-container">
+                <TreeView TNode="FileNode" Nodes="@filteredTree3"
+                          HasChildNodes="@(node => node.IsDirectory)"
+                          GetChildNodes="@(node => LoadSubnodesSync(node.Path))"
+                          SelectedNodeChanged="OnSelectedNodeChanged3"
+                          SelectionMode="TreeViewSelectionMode.Single">
+                    <NodeContent>                        
+                                @if (context.IsDirectory)
+
+                                {
+                                    <i class="fas fa-folder" style="color: #FFD700; margin-right: 5px;"></i>
+                                }
+
+                                else
+
+                                {
+                                    <i class="fas fa-file" style="color: gray; margin-right: 5px;"></i>
+                                }
+                                <span>@context.Name</span>
+                         
+                    </NodeContent>
+                </TreeView>
+            </div>
+        </CardBody>
+        <CardFooter>
+            <div class="d-flex justify-content-between">
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => ChangePage(3, -1))" Disabled="@(_page3 == 1)">Précédent</Button>
+                <Button Size="Size.Small" Color="Color.Primary" Clicked="@(() => ChangePage(3, 1))">Suivant</Button>
+            </div>
+        </CardFooter>
+    </Card>
+</div>
+
+@if (statusMessage != null)
+
+{
+    <div class="alert alert-danger mt-3">@statusMessage</div>
+}
+
+<div>
+    <h5>Messages de Débogage</h5>
+    <ul>
+        @foreach (var message in debugMessages)
+
+        {
+            <li>@message</li>
+        }
+    </ul>
+</div>
+
+@code {
+    private List<string> debugMessages = new(); // Liste des messages de débogage
+
+
+
+    private string searchTerm1 = string.Empty;
+    private string searchTerm2 = string.Empty;
+    private string searchTerm3 = string.Empty;
+    private string? statusMessage = null;
+
+    private List<FileNode> selectedFiles = new();
+
+    private string? searchResultMessage1 = null;
+    private string? searchResultMessage2 = null;
+    private string? searchResultMessage3 = null;
+
+    private List<FileNode> tree1 = new();
+    private List<FileNode> tree2 = new();
+    private List<FileNode> tree3 = new();
+
+    private List<FileNode> filteredTree1 = new();
+    private List<FileNode> filteredTree2 = new();
+    private List<FileNode> filteredTree3 = new();
+
+    private FileNode? selectedNode1;
+    private FileNode? selectedNode2;
+    private FileNode? selectedNode3;
+
+    private int _page1 = 1;
+    private int _page2 = 1;
+    private int _page3 = 1;
+
+    private string rootDireectroyPrelimianire = @"C:\\App\\rep_test_à_supprimer\\SMS_PRELIMINAIRE";
+    private string rootDirectroySerie = @"C:\\App\\rep_test_à_supprimer\\ARTICLE";
+    private string rootDireectroyHistorique = @"C:\\App\\rep_test_à_supprimer\\Historique";
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadTree(1);
+        await ReloadTree(2);
+        await ReloadTree(3);
+
+        // Initialise les vues filtrées avec tous les éléments
+        filteredTree1 = tree1;
+        filteredTree2 = tree2;
+        filteredTree3 = tree3;
+    }
+
+    private void OnNodeCheckedChanged(FileNode node, ChangeEventArgs e)
+    {
+        if ((bool)e.Value)
+        {
+            // Ajoute le fichier à la liste des fichiers sélectionnés
+            selectedFiles.Add(node);
+        }
+        else
+        {
+            // Retire le fichier de la liste des fichiers sélectionnés
+            selectedFiles.Remove(node);
+        }
+    }
+
+    private List<FileNode> LoadSubnodesSync(string path, int page = 1, int pageSize = 50)
+    {
+        try
+        {
+            var nodes = new List<FileNode>(FileService.LoadDirectoryAsync(path, page, pageSize).Result);
+            return nodes;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erreur lors du chargement des sous-nœuds : {ex.Message}");
+            return new List<FileNode>();
+        }
+    }
+
+    private async Task ReloadTree(int treeNumber, int page = 1)
+
+    {
+        switch (treeNumber)
+        {
+            case 1:
+                tree1 = await FileService.LoadDirectoryAsync(rootDireectroyPrelimianire,page);
+                filteredTree1 = new List<FileNode>(tree1);
+                searchResultMessage1 = null;
+                break;
+            case 2:
+                tree2 = await FileService.LoadDirectoryAsync(rootDirectroySerie,page);
+                filteredTree2 = new List<FileNode>(tree2);
+                searchResultMessage2 = null;
+                break;
+            case 3:
+                tree3 = await FileService.LoadDirectoryAsync(rootDireectroyHistorique,page);
+                filteredTree3 = new List<FileNode>(tree3);
+                searchResultMessage3 = null;
+                break;
+        }
+    }
+
+    private async Task SearchInTree(int treeNumber)
+    {
+        switch (treeNumber)
+        {
+            case 1:
+                // Utilisez le debugMessages pour capturer chaque étape de la recherche
+                filteredTree1 = await FileService.SearchTreeNodesAsync(tree1, searchTerm1, debugMessages);
+                if (!filteredTree1.Any())
+                {
+                    debugMessages.Add("Aucun résultat trouvé.");
+                }
+                else
+                {
+                    debugMessages.Add($"{filteredTree1.Count} résultat(s) trouvé(s)");
+                }
+                break;
+
+
+                //   searchResultMessage1 = filteredTree1.Any() ? $"{filteredTree1.Count} résultats trouvés" : "Aucun résultat trouvé";
+             //   break;
+        //    case 2:
+        //        filteredTree2 = await FileService.SearchTreeNodesAsync(tree2, searchTerm2);
+        //       searchResultMessage2 = filteredTree2.Any() ? $"{filteredTree2.Count} résultats trouvés" : "Aucun résultat trouvé";
+         //       break;
+         //   case 3:
+         //       filteredTree3 = await FileService.SearchTreeNodesAsync(tree3, searchTerm3);
+             //   searchResultMessage3 = filteredTree3.Any() ? $"{filteredTree3.Count} résultats trouvés" : "Aucun résultat trouvé";
+            //    break;//
+        }
+        StateHasChanged();
+
+    }
+
+    private void OnSelectedNodeChanged1(FileNode node)
+    {  
+        selectedNode1 = node;
+    }
+    private void OnSelectedNodeChanged2(FileNode node)
+    {
+        selectedNode2 = node;
+    }
+    private void OnSelectedNodeChanged3(FileNode node)
+    {
+        selectedNode3 = node;
+    }
+
+    private async Task MoveToDirectory2()
+    {
+        if (selectedNode1?.Path == null)
+        {
+            statusMessage = "Veuillez sélectionner un fichier ou un dossier dans Répertoire 1.";
+            return;
+        }
+        string targetPath = selectedNode2?.IsDirectory == true 
+            ? selectedNode2.Path
+            : rootDireectroyHistorique;
+
+        var destinationFilePath = Path.Combine(targetPath, Path.GetFileName(selectedNode1.Path));
+        bool result = await FileService.MoveFileOrDirectoryAsync(selectedNode1.Path, destinationFilePath);
+
+        statusMessage = result ? "Déplacement réussi vers Répertoire 2." : "Erreur lors du déplacement.";
+        await ReloadTree(1);
+        await ReloadTree(2);
+    }
+
+    private async Task MoveFromDirectory2()
+    {
+        if (selectedNode2?.Path == null || selectedNode1?.Path == null)
+        {
+            statusMessage = "Veuillez sélectionner un fichier dans Répertoire 2 et un dossier de destination dans Répertoire 1.";
+            return;
+        }
+
+        string targetPath = selectedNode1.IsDirectory
+            ? selectedNode1.Path
+            : rootDirectroySerie;
+
+        var destinationFilePath = Path.Combine(targetPath, Path.GetFileName(selectedNode2.Path));
+        bool result = await FileService.MoveFileOrDirectoryAsync(selectedNode2.Path, destinationFilePath);
+        statusMessage = result ? "Déplacement réussi vers Répertoire 1." : "Erreur lors du déplacement.";
+        await ReloadTree(1);
+        await ReloadTree(2);
+    }
+
+    private async Task MoveToDirectory3()
+    {
+        if (selectedNode2?.Path == null)
+        {
+            statusMessage = "Veuillez sélectionner un fichier dans Répertoire 2.";
+            return;
+        }
+        string targetPath = selectedNode3?.IsDirectory == true
+            ? selectedNode3.Path
+            : rootDireectroyPrelimianire;
+
+        var destinationFilePath = Path.Combine(targetPath, Path.GetFileName(selectedNode2.Path));
+        bool result = await FileService.MoveFileOrDirectoryAsync(selectedNode2.Path, destinationFilePath);
+        statusMessage = result ? "Déplacement réussi vers Répertoire 3." : "Erreur lors du déplacement.";
+        await ReloadTree(2);
+        await ReloadTree(3);
+    }
+    private async Task MoveFromDirectory3()
+    {
+        if (selectedNode3?.Path == null || selectedNode2?.Path == null)
+        {
+            statusMessage = "Veuillez sélectionner un fichier dans Répertoire 3 et un dossier de destination dans Répertoire 2.";
+            return;
+        }
+
+        string targetPath = selectedNode2.IsDirectory
+            ? selectedNode2.Path
+            : rootDireectroyHistorique;
+
+        var destinationFilePath = Path.Combine(targetPath, Path.GetFileName(selectedNode3.Path));
+        bool result = await FileService.MoveFileOrDirectoryAsync(selectedNode3.Path, destinationFilePath);
+        statusMessage = result ? "Déplacement réussi vers Répertoire 2." : "Erreur lors du déplacement.";
+        await ReloadTree(2);
+        await ReloadTree(3);
+    }
+
+    private void ChangePage(int treeNumber, int delta)
+    {
+        switch (treeNumber)
+        {
+            case 1:
+                _page1 = Math.Max(1, _page1 + delta);
+                ReloadTree(1, _page1);
+                break;
+            case 2:
+                _page2 = Math.Max(1, _page2 + delta);
+                ReloadTree(2, _page2);
+                break;
+            case 3:
+                _page3 = Math.Max(1, _page3 + delta);
+                ReloadTree(3, _page3);
+                break;
+        }
+    }
+}

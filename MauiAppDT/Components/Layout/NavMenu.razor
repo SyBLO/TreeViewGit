@@ -1,0 +1,101 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">       
+        <img src="/images/logo3.svg" width="200" height="50" >
+          
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">     
+       
+        <li class="nav-item px-3" style="list-style-type: none;">
+            
+             <li class="nav-item px-3" style="list-style-type: none;">
+                        <NavLink class="nav-link" href="todolist">
+                            <span aria-hidden="true" align="right"></span>ACTIONS LIST
+                        </NavLink>
+             </li>
+           
+
+           <NavLink class="nav-link" @onclick="()=>expandSubNavFollow = !expandSubNavFollow">
+             <span class="oi oi-list-rich" aria-hidden="true"></span> FOLLOW UP
+           </NavLink>
+
+            @if (expandSubNavFollow)
+            {
+                <ul class="nav flex-column">
+                    @*<li class="nav-item px-3" style="list-style-type: none;">
+                        <NavLink class="nav-link" href="actionprojet/projetp1">
+                        <span aria-hidden="true" align="right"></span>Actions List
+                    </NavLink>
+                    </li>*@
+                    <li class="nav-item px-3" style="list-style-type: none;">
+                        <NavLink class="nav-link" href="etude">
+                        <span aria-hidden="true" align="right"></span>ECR
+                    </NavLink>
+                    </li>
+                    <li class="nav-item px-3" style="list-style-type: none;">
+                          <NavLink class="nav-link" href="notificationpage">
+                        <span aria-hidden="true" align="right"></span>Notification
+                        </NavLink>
+                    </li>
+                    <li class="nav-item px-3" style="list-style-type: none;">
+                         <NavLink class="nav-link" href="cmmpage">
+                           <span aria-hidden="true" align="right"></span>CMM
+                         </NavLink>
+                    </li>
+                    
+                </ul>               
+            }
+        </li>
+
+         <li class="nav-item px-3" style="list-style-type: none;">
+             <NavLink class="nav-link" @onclick="()=>expandSubNav = !expandSubNav">
+                     <span class="oi oi-list-rich" aria-hidden="true"></span> DATAs
+            </NavLink>      
+
+            @if (expandSubNav)
+            {
+                <ul class="nav flex-column">
+                    <li class="nav-item px-3" style="list-style-type: none;">
+                         <NavLink class="nav-link" href="adtpage/adtpage1">
+                            <span aria-hidden="true"></span>ADT
+                         </NavLink>
+                    </li>                 
+                    <li class="nav-item px-3" style="list-style-type: none;">
+                          <NavLink class="nav-link" href="ecopage">
+                             <span aria-hidden="true"></span>ECO Number
+                          </NavLink>
+                    </li>                    
+                </ul> 
+              
+            }
+         </li>
+         <RadzenLabel Text="Direction Technique Cobham - CACD - Lighting; IHM, Copyright &copy ; 2023, version v0.0.1," class=".rz-color-white">
+            </RadzenLabel>
+    </nav>
+       <RadzenFooter>
+        <ChildContent>
+            
+        </ChildContent>
+     </RadzenFooter>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private bool expandSubNav;
+
+    private bool expandSubNavFollow;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }  
+
+
+}
